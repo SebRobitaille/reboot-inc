@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://dobr26nmbg5y7"]
+
+[ext_resource type="Script" uid="uid://creyhjaxr2qvt" path="res://scenes/run/run.gd" id="1_dyish"]
+[ext_resource type="PackedScene" uid="uid://bhwe205c17djf" path="res://scenes/base/base.tscn" id="1_xss3q"]
+[ext_resource type="Script" uid="uid://dehw1qbip2js" path="res://scenes/run/enemy_spawner.gd" id="3_xaqc1"]
+[ext_resource type="Script" uid="uid://cumba8fmhb32w" path="res://scenes/abilities/ability_system.gd" id="5_l4dwq"]
+[ext_resource type="Resource" uid="uid://dh631mkyn8gkf" path="res://resources/snipe_effect.tres" id="6_l6p45"]
+[ext_resource type="Resource" uid="uid://c1sminytidfpy" path="res://resources/burst.tres" id="6_r4r11"]
+[ext_resource type="Script" uid="uid://ck83a1wyak7r2" path="res://scenes/abilities/mana_system.gd" id="7_bcguq"]
+[ext_resource type="PackedScene" uid="uid://dgaj057h5ethq" path="res://scenes/ui/hud.tscn" id="8_ldo5l"]
+[ext_resource type="Script" uid="uid://bhr7wvgke1u5s" path="res://scenes/waves/wave_manager.gd" id="10_yeia0"]
+[ext_resource type="Script" uid="uid://cugqg4aae4cob" path="res://scenes/waves/wave_data.gd" id="11_fo0ly"]
+[ext_resource type="Script" uid="uid://ccv5shjh3k6bj" path="res://scenes/systems/gold_system.gd" id="14_fo0ly"]
+[ext_resource type="Resource" uid="uid://dlahopojqslir" path="res://resources/wave_3.tres" id="14_kdgoc"]
+[ext_resource type="Resource" uid="uid://dmmrv50wnx7ap" path="res://resources/wave_4.tres" id="14_txvia"]
+[ext_resource type="Script" uid="uid://v68yibunb8d0" path="res://scenes/systems/placement_system.gd" id="14_x53nd"]
+[ext_resource type="PackedScene" uid="uid://bqxdvjqba06nb" path="res://scenes/systems/placement_ghost.tscn" id="15_l6p45"]
+[ext_resource type="Resource" uid="uid://dgcpfh5j28tm1" path="res://resources/wave_5.tres" id="15_u2bn2"]
+[ext_resource type="Resource" uid="uid://djyy0h2ju5yme" path="res://resources/wave_6.tres" id="16_psst2"]
+[ext_resource type="Resource" uid="uid://bq2ugictq8ep5" path="res://resources/wave_1.tres" id="20_w1"]
+[ext_resource type="Resource" uid="uid://2ommkafnujrf" path="res://resources/wave_2.tres" id="21_w2"]
+[ext_resource type="Resource" uid="uid://c4n9x7vq2pe6h" path="res://resources/wave_7.tres" id="23_w7"]
+[ext_resource type="Resource" uid="uid://bm8k3ry6ws1ot" path="res://resources/wave_8.tres" id="24_w8"]
+[ext_resource type="Resource" uid="uid://dt5p2mxn7bl4c" path="res://resources/wave_9.tres" id="25_w9"]
+[ext_resource type="Resource" uid="uid://b9v4k8tf3qm2i" path="res://resources/wave_10.tres" id="26_w10"]
+[ext_resource type="Resource" uid="uid://cj7x2nr5wh8pq" path="res://resources/wave_11.tres" id="27_w11"]
+[ext_resource type="Resource" uid="uid://do3m6vy9bk4st" path="res://resources/wave_12.tres" id="28_w12"]
+[ext_resource type="Resource" uid="uid://bk9f4pu7mx3ln" path="res://resources/wave_13.tres" id="29_w13"]
+[ext_resource type="Resource" uid="uid://cn5q8xv2mr7jt" path="res://resources/wave_14.tres" id="30_w14"]
+[ext_resource type="Resource" uid="uid://dl7y3wb6nk9px" path="res://resources/wave_15.tres" id="31_w15"]
+[ext_resource type="PackedScene" uid="uid://cundxhhah7wdt" path="res://scenes/abilities/ability_cursor.tscn" id="17_kdgoc"]
+[ext_resource type="Script" uid="uid://cy3nanan3mgfh" path="res://scenes/grid/grid_system.gd" id="19_txvia"]
+[ext_resource type="PackedScene" uid="uid://csfj6t43vq87q" path="res://scenes/grid/arena.tscn" id="21_psst2"]
+[ext_resource type="Script" uid="uid://7wj8dg526djb" path="res://scenes/run/nav_baker.gd" id="22_psst2"]
+[ext_resource type="PackedScene" uid="uid://ixb08w0mobyu" path="res://scenes/grid/grid_visualizer.tscn" id="22_ymu0v"]
+[ext_resource type="Resource" uid="uid://cfw8n9dt4xzjk" path="res://resources/map_1.tres" id="24_map1"]
+
+[node name="Run" type="Node2D" unique_id=1506954821]
+script = ExtResource("1_dyish")
+
+[node name="Base" parent="." unique_id=308347853 instance=ExtResource("1_xss3q")]
+position = Vector2(640, 360)
+
+[node name="Enemies" type="Node2D" parent="." unique_id=1844747858]
+
+[node name="EnemySpawner" type="Node" parent="." unique_id=60756468 node_paths=PackedStringArray("grid_system")]
+script = ExtResource("3_xaqc1")
+grid_system = NodePath("../GridSystem")
+
+[node name="AbilitySystem" type="Node" parent="." unique_id=1600590690 node_paths=PackedStringArray("mana_system")]
+script = ExtResource("5_l4dwq")
+slot_1 = ExtResource("6_r4r11")
+slot_2 = ExtResource("6_l6p45")
+mana_system = NodePath("../ManaSystem")
+
+[node name="ManaSystem" type="Node" parent="." unique_id=578302255]
+script = ExtResource("7_bcguq")
+
+[node name="HUD" parent="." unique_id=1689113975 node_paths=PackedStringArray("ability_system", "mana_system", "wave_manager", "gold_system", "base", "placement_system") instance=ExtResource("8_ldo5l")]
+ability_system = NodePath("../AbilitySystem")
+mana_system = NodePath("../ManaSystem")
+wave_manager = NodePath("../WaveManager")
+gold_system = NodePath("../GoldSystem")
+base = NodePath("../Base")
+placement_system = NodePath("../PlacementSystem")
+
+[node name="WaveManager" type="Node" parent="." unique_id=809487677 node_paths=PackedStringArray("enemy_spawner")]
+script = ExtResource("10_yeia0")
+waves = Array[ExtResource("11_fo0ly")]([ExtResource("20_w1"), ExtResource("21_w2"), ExtResource("14_kdgoc"), ExtResource("14_txvia"), ExtResource("15_u2bn2"), ExtResource("16_psst2"), ExtResource("23_w7"), ExtResource("24_w8"), ExtResource("25_w9"), ExtResource("26_w10"), ExtResource("27_w11"), ExtResource("28_w12"), ExtResource("29_w13"), ExtResource("30_w14"), ExtResource("31_w15")])
+enemy_spawner = NodePath("../EnemySpawner")
+
+[node name="GoldSystem" type="Node" parent="." unique_id=1171584241 node_paths=PackedStringArray("enemy_spawner")]
+script = ExtResource("14_fo0ly")
+starting_gold = 300
+enemy_spawner = NodePath("../EnemySpawner")
+
+[node name="Towers" type="Node2D" parent="." unique_id=1962846952]
+
+[node name="PlacementSystem" type="Node" parent="." unique_id=505661989 node_paths=PackedStringArray("gold_system", "wave_manager", "grid_system", "structures_container")]
+script = ExtResource("14_x53nd")
+gold_system = NodePath("../GoldSystem")
+wave_manager = NodePath("../WaveManager")
+grid_system = NodePath("../GridSystem")
+structures_container = NodePath("../Towers")
+ghost_scene = ExtResource("15_l6p45")
+
+[node name="AbilityCursor" parent="." unique_id=2038378880 node_paths=PackedStringArray("ability_system") instance=ExtResource("17_kdgoc")]
+ability_system = NodePath("../AbilitySystem")
+
+[node name="GridSystem" type="Node" parent="." unique_id=92417500]
+script = ExtResource("19_txvia")
+map_data = ExtResource("24_map1")
+
+[node name="Arena" parent="." unique_id=214135843 node_paths=PackedStringArray("grid_system") instance=ExtResource("21_psst2")]
+grid_system = NodePath("../GridSystem")
+
+[node name="GridVisualizer" parent="." unique_id=1305043801 node_paths=PackedStringArray("placement_system") instance=ExtResource("22_ymu0v")]
+placement_system = NodePath("../PlacementSystem")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2009315426 node_paths=PackedStringArray("grid_system")]
+script = ExtResource("22_psst2")
+grid_system = NodePath("../GridSystem")

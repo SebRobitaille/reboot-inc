@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://bwhaedvv3r7cm" path="res://scenes/structures/wall.tscn" id="5_glshs"]
 [ext_resource type="Resource" uid="uid://bvk9e2tl5oa7x" path="res://resources/splash_tower.tres" id="6_mortar"]
 [ext_resource type="PackedScene" uid="uid://do4qahf3x7i8m" path="res://scenes/towers/splash_tower.tscn" id="7_mortar"]
+[ext_resource type="Resource" uid="uid://c7k2m4p8xb1qe" path="res://resources/machine_gun_tower.tres" id="8_mg"]
+[ext_resource type="PackedScene" uid="uid://dm6r3v9nc5x8a" path="res://scenes/towers/machine_gun_tower.tscn" id="9_mg"]
 
 [node name="BuildMenu" type="HBoxContainer" unique_id=702864145]
 offset_right = 40.0
@@ -29,3 +31,8 @@ structure_data = ExtResource("4_ndvqu")
 layout_mode = 2
 structure_scene = ExtResource("7_mortar")
 structure_data = ExtResource("6_mortar")
+
+[node name="MachineGunButton" parent="." instance=ExtResource("2_qecuw")]
+layout_mode = 2
+structure_scene = ExtResource("9_mg")
+structure_data = ExtResource("8_mg")

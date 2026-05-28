@@ -2,11 +2,10 @@
 
 [ext_resource type="Script" uid="uid://cugqg4aae4cob" path="res://scenes/waves/wave_data.gd" id="1_bkq04"]
 [ext_resource type="PackedScene" uid="uid://dyeid3rkg26eg" path="res://scenes/enemies/grunt.tscn" id="1_jupop"]
-[ext_resource type="PackedScene" uid="uid://ctte1i6pbvl3f" path="res://scenes/enemies/runner.tscn" id="2_5wjre"]
 
 [resource]
 script = ExtResource("1_bkq04")
-enemy_scene = ExtResource("2_5wjre")
-enemy_count = 100
-spawn_interval = 0.1
+enemy_scene = ExtResource("1_jupop")
+enemy_count = 8
+spawn_interval = 1.5
 metadata/_custom_type_script = "uid://cugqg4aae4cob"
