@@ -42,7 +42,7 @@ func _rebuild() -> void:
 			]))
 
 	var poly := NavigationPolygon.new()
-	poly.agent_radius = 0.0
+	poly.agent_radius = 14.0
 	# bake_from_source_geometry_data is async — apply results only inside the callback
 	NavigationServer2D.bake_from_source_geometry_data(poly, source,
 		Callable(self, "_on_bake_done").bind(poly, gen))
@@ -57,5 +57,3 @@ func _apply_poly(poly: NavigationPolygon, gen: int) -> void:
 	navigation_polygon = poly
 	NavigationServer2D.map_force_update(get_world_2d().get_navigation_map())
 	nav_rebuilt.emit()
-
-	print("[nav] gen=%d polygons=%d" % [gen, poly.get_polygon_count()])
