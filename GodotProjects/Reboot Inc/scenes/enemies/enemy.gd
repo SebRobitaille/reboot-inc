@@ -8,6 +8,8 @@ const _WAYPOINT_REACH_DIST: float = 12.0
 const _PATH_GOAL_THRESHOLD: float = 72.0  # 1.5 × cell size — path must end this close to goal
 const _MELEE_RANGE: float = 40.0
 const _MELEE_INTERVAL: float = 1.0
+const _SEPARATION_RADIUS: float = 20.0
+const _SEPARATION_STRENGTH: float = 80.0
 
 @export var max_health: float = 30.0
 @export var move_speed: float = 80.0
@@ -82,7 +84,7 @@ func _physics_process(delta: float) -> void:
 			return
 		_handle_blocking_target(delta)
 		return
-	velocity = _get_steering_velocity()
+	velocity = _get_steering_velocity() + _get_separation_velocity()
 	if face_movement_direction and velocity.length_squared() > 0.001:
 		rotation = velocity.angle()
 	move_and_slide()
@@ -91,7 +93,6 @@ func _handle_blocking_target(delta: float) -> void:
 	var dist := global_position.distance_to(_blocking_target.global_position)
 	if dist > _MELEE_RANGE:
 		velocity = global_position.direction_to(_blocking_target.global_position) * move_speed
-		move_and_slide()
 	else:
 		velocity = Vector2.ZERO
 		_melee_timer -= delta
@@ -99,6 +100,22 @@ func _handle_blocking_target(delta: float) -> void:
 			if _blocking_target.has_method("take_damage"):
 				_blocking_target.take_damage(contact_damage)
 			_melee_timer = _MELEE_INTERVAL
+	velocity += _get_separation_velocity()
+	move_and_slide()
+
+func _get_separation_velocity() -> Vector2:
+	var push := Vector2.ZERO
+	for e: Node in get_tree().get_nodes_in_group("enemies"):
+		if e == self:
+			continue
+		var other := e as Node2D
+		if other == null:
+			continue
+		var offset := global_position - other.global_position
+		var d := offset.length()
+		if d > 0.0 and d < _SEPARATION_RADIUS:
+			push += offset.normalized() * (1.0 - d / _SEPARATION_RADIUS) * _SEPARATION_STRENGTH
+	return push
 
 func _get_steering_velocity() -> Vector2:
 	if _path.is_empty() or _path_index >= _path.size():
