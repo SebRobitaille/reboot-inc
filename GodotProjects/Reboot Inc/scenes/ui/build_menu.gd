@@ -5,7 +5,7 @@ var placement_system: PlacementSystem = null
 var wave_manager: WaveManager = null
 var gold_system: GoldSystem = null
 
-const _SHORTCUT_KEYS: Array[String] = ["Q", "W"]
+const _SHORTCUT_KEYS: Array[String] = ["Q", "W", "E"]
 
 func bind(placement: PlacementSystem, waves: WaveManager, gold: GoldSystem) -> void:
 	placement_system = placement
@@ -33,7 +33,7 @@ func _refresh_visibility() -> void:
 	var phase := wave_manager.get_phase()
 	visible = (phase == WaveManager.Phase.PREP or phase == WaveManager.Phase.WAVE_CLEARED)
 
-# Q = first button (Laser Tower), W = second button (Wall)
+# Q = first button (Laser Tower), W = second button (Wall), E = third button (Mortar)
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return
@@ -47,6 +47,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	match event.keycode:
 		KEY_Q: idx = 0
 		KEY_W: idx = 1
+		KEY_E: idx = 2
 	if idx < 0 or idx >= buttons.size():
 		return
 	buttons[idx].activate()

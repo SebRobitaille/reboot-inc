@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://b62jrwf4ec8mq"]
+
+[ext_resource type="Script" uid="uid://dcico5ny0ro5b" path="res://scenes/ui/build_menu.gd" id="1_xaliy"]
+[ext_resource type="PackedScene" uid="uid://dp7kp83pr2gfi" path="res://scenes/ui/build_button.tscn" id="2_qecuw"]
+[ext_resource type="Resource" uid="uid://ece25fhk8ln0" path="res://resources/laser_tower.tres" id="3_ndvqu"]
+[ext_resource type="PackedScene" uid="uid://c4qgdy2467cla" path="res://scenes/towers/laser_tower.tscn" id="3_qecuw"]
+[ext_resource type="Resource" uid="uid://h8vh28n6618o" path="res://resources/wall.tres" id="4_ndvqu"]
+[ext_resource type="PackedScene" uid="uid://bwhaedvv3r7cm" path="res://scenes/structures/wall.tscn" id="5_glshs"]
+[ext_resource type="Resource" uid="uid://bvk9e2tl5oa7x" path="res://resources/splash_tower.tres" id="6_mortar"]
+[ext_resource type="PackedScene" uid="uid://do4qahf3x7i8m" path="res://scenes/towers/splash_tower.tscn" id="7_mortar"]
+
+[node name="BuildMenu" type="HBoxContainer" unique_id=702864145]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_xaliy")
+
+[node name="LaserTowerButton" parent="." unique_id=1407351194 instance=ExtResource("2_qecuw")]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+structure_scene = ExtResource("3_qecuw")
+structure_data = ExtResource("3_ndvqu")
+
+[node name="WallButton" parent="." unique_id=340412248 instance=ExtResource("2_qecuw")]
+layout_mode = 2
+structure_scene = ExtResource("5_glshs")
+structure_data = ExtResource("4_ndvqu")
+
+[node name="MortarButton" parent="." instance=ExtResource("2_qecuw")]
+layout_mode = 2
+structure_scene = ExtResource("7_mortar")
+structure_data = ExtResource("6_mortar")

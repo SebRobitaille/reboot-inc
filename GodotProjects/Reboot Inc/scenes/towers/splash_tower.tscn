@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://do4qahf3x7i8m"]
+
+[ext_resource type="Script" uid="uid://dxm8uh9i4bq3k" path="res://scenes/towers/splash_tower.gd" id="1_sptwr"]
+[ext_resource type="Resource" uid="uid://bvk9e2tl5oa7x" path="res://resources/splash_tower.tres" id="2_sptwr"]
+[ext_resource type="PackedScene" uid="uid://b8f3gdoc0gll3" path="res://scenes/effects/damage_number.tscn" id="3_sptwr"]
+[ext_resource type="PackedScene" uid="uid://fnhsai0wnray" path="res://scenes/ui/health_bar.tscn" id="4_sptwr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sptwr"]
+size = Vector2(32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sptwr"]
+radius = 1.0
+
+[node name="SplashTower" type="StaticBody2D"]
+script = ExtResource("1_sptwr")
+data = ExtResource("2_sptwr")
+damage_number_scene = ExtResource("3_sptwr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_sptwr")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.9, 0.5, 0.1, 1)
+polygon = PackedVector2Array(15, 0, 8, 13, -8, 13, -15, 0, -8, -13, 8, -13)
+
+[node name="DetectionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("CircleShape2D_sptwr")
+
+[node name="HealthBar" parent="." instance=ExtResource("4_sptwr")]
+position = Vector2(0, -28)

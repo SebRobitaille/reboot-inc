@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SplashTowerData" format=3 uid="uid://bvlae2tl5oa7x"]
+
+[ext_resource type="Script" uid="uid://bpq7t2nc1ks4e" path="res://scenes/towers/splash_tower_data.gd" id="1_spdata"]
+
+[resource]
+script = ExtResource("1_spdata")
+splash_radius = 80.0
+outer_damage_fraction = 0.4
+damage = 50.0
+fire_rate = 0.4
+detection_range = 240.0
+display_name = "Mortar"
+gold_cost = 100
+max_health = 80.0
+metadata/_custom_type_script = "uid://bpq7t2nc1ks4e"
