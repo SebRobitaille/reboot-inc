@@ -5,15 +5,21 @@ var placement_system: PlacementSystem = null
 var wave_manager: WaveManager = null
 var gold_system: GoldSystem = null
 
+const _SHORTCUT_KEYS: Array[String] = ["Q", "W"]
+
 func bind(placement: PlacementSystem, waves: WaveManager, gold: GoldSystem) -> void:
 	placement_system = placement
 	wave_manager = waves
 	gold_system = gold
 
+	var btn_idx := 0
 	for child in get_children():
 		if child is BuildButton:
 			child.build_requested.connect(_on_build_requested)
 			child.bind(gold_system)
+			if btn_idx < _SHORTCUT_KEYS.size():
+				child.set_shortcut_hint(_SHORTCUT_KEYS[btn_idx])
+			btn_idx += 1
 
 	if wave_manager != null:
 		wave_manager.phase_changed.connect(_on_phase_changed)

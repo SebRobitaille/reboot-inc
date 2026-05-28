@@ -10,9 +10,19 @@ var _gold_system: GoldSystem = null
 
 func _ready() -> void:
 	pressed.connect(_on_pressed)
-	if structure_data != null:
-		text = "%s\n%d g" % [structure_data.display_name, structure_data.gold_cost]
 	custom_minimum_size = Vector2(120, 60)
+	_refresh_text("")
+
+func set_shortcut_hint(key_label: String) -> void:
+	_refresh_text(key_label)
+
+func _refresh_text(key_label: String) -> void:
+	if structure_data == null:
+		return
+	if key_label.is_empty():
+		text = "%s\n%d g" % [structure_data.display_name, structure_data.gold_cost]
+	else:
+		text = "%s  [%s]\n%d g" % [structure_data.display_name, key_label, structure_data.gold_cost]
 
 func bind(gold_system: GoldSystem) -> void:
 	_gold_system = gold_system

@@ -1,6 +1,10 @@
 extends NavigationRegion2D
 
+signal nav_rebuilt
+
 @export var grid_system: GridSystem
+
+var _rebuild_gen: int = 0
 
 func _ready() -> void:
 	if grid_system != null:
@@ -8,51 +12,50 @@ func _ready() -> void:
 	call_deferred("_rebuild")
 
 func _rebuild() -> void:
-	var origin := GridSystem.ARENA_ORIGIN
-	var arena_size := Vector2(
-		GridSystem.GRID_WIDTH * GridSystem.CELL_SIZE,
-		GridSystem.GRID_HEIGHT * GridSystem.CELL_SIZE
-	)
+	_rebuild_gen += 1
+	var gen := _rebuild_gen
 
-	# Start with the full arena as walkable
-	var walkable: Array = [PackedVector2Array([
-		origin,
-		origin + Vector2(arena_size.x, 0),
-		origin + arena_size,
-		origin + Vector2(0, arena_size.y),
-	])]
+	var cs := float(GridSystem.CELL_SIZE)
+	var ox := GridSystem.ARENA_ORIGIN.x
+	var oy := GridSystem.ARENA_ORIGIN.y
+	var ow := float(GridSystem.GRID_WIDTH) * cs
+	var oh := float(GridSystem.GRID_HEIGHT) * cs
 
-	# Subtract each occupied cell using polygon clipping
-	var half := GridSystem.CELL_SIZE / 2.0 + 1.0
-	var holes_carved := 0
-	for x in GridSystem.GRID_WIDTH:
-		for y in GridSystem.GRID_HEIGHT:
-			var cell := Vector2i(x, y)
-			var state := grid_system.get_cell(cell)
-			if state == GridSystem.CellState.TOWER or state == GridSystem.CellState.WALL:
-				var center := grid_system.cell_to_world(cell)
-				var hole := PackedVector2Array([
-					center + Vector2(-half, -half),
-					center + Vector2( half, -half),
-					center + Vector2( half,  half),
-					center + Vector2(-half,  half),
-				])
-				var next: Array = []
-				for region: PackedVector2Array in walkable:
-					next.append_array(Geometry2D.clip_polygons(region, hole))
-				walkable = next
-				holes_carved += 1
+	var source := NavigationMeshSourceGeometryData2D.new()
+	source.add_traversable_outline(PackedVector2Array([
+		Vector2(ox, oy),
+		Vector2(ox + ow, oy),
+		Vector2(ox + ow, oy + oh),
+		Vector2(ox, oy + oh),
+	]))
 
-	# Build NavigationPolygon directly from clipped regions — no baking needed
+	for y in GridSystem.GRID_HEIGHT:
+		for x in GridSystem.GRID_WIDTH:
+			if grid_system.is_walkable(Vector2i(x, y)):
+				continue
+			var tl := GridSystem.ARENA_ORIGIN + Vector2(x * cs, y * cs)
+			source.add_obstruction_outline(PackedVector2Array([
+				tl,
+				tl + Vector2(cs, 0.0),
+				tl + Vector2(cs, cs),
+				tl + Vector2(0.0, cs),
+			]))
+
 	var poly := NavigationPolygon.new()
-	var all_verts := PackedVector2Array()
-	for region: PackedVector2Array in walkable:
-		var start := all_verts.size()
-		all_verts.append_array(region)
-		var indices := PackedInt32Array()
-		for i in region.size():
-			indices.append(start + i)
-		poly.add_polygon(indices)
-	poly.vertices = all_verts
+	poly.agent_radius = 0.0
+	# bake_from_source_geometry_data is async — apply results only inside the callback
+	NavigationServer2D.bake_from_source_geometry_data(poly, source,
+		Callable(self, "_on_bake_done").bind(poly, gen))
+
+func _on_bake_done(poly: NavigationPolygon, gen: int) -> void:
+	# Callback may arrive on a background thread — defer back to main thread
+	call_deferred("_apply_poly", poly, gen)
+
+func _apply_poly(poly: NavigationPolygon, gen: int) -> void:
+	if gen != _rebuild_gen:
+		return  # A newer rebuild superseded this one
 	navigation_polygon = poly
-	print("[nav] rebuilt: %d holes carved, %d walkable regions" % [holes_carved, walkable.size()])
+	NavigationServer2D.map_force_update(get_world_2d().get_navigation_map())
+	nav_rebuilt.emit()
+
+	print("[nav] gen=%d polygons=%d" % [gen, poly.get_polygon_count()])
