@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="PlaceableDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/placeable_def.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/combat_stats.gd" id="2"]
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("2")
+base_damage = 40.0
+max_targets = 1
+chain_range = 0.0
+chain_falloff = 1.0
+energy_cost = 12.0
+cast_cooldown = 1.1
+cast_range = 460.0
+
+[resource]
+script = ExtResource("1")
+title = "Railgun"
+kind = 0
+cost = 45
+color = Color(1.0, 0.7, 0.3, 1)
+radius = 15.0
+tower_stats = SubResource("stats")

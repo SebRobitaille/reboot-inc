@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="PlaceableDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/placeable_def.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/combat_stats.gd" id="2"]
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("2")
+base_damage = 14.0
+max_targets = 3
+chain_range = 140.0
+chain_falloff = 0.65
+energy_cost = 8.0
+cast_cooldown = 0.6
+cast_range = 240.0
+
+[resource]
+script = ExtResource("1")
+title = "Lightning Tower"
+kind = 0
+cost = 30
+color = Color(0.45, 0.8, 1.0, 1)
+radius = 16.0
+tower_stats = SubResource("stats")

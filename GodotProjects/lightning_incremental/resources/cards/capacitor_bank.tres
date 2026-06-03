@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ShopCard" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/shop_card.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/stat_modifier.gd" id="2"]
+
+[sub_resource type="Resource" id="mod_1"]
+script = ExtResource("2")
+stat = "energy_max"
+op = 0
+amount = 30.0
+
+[resource]
+script = ExtResource("1")
+title = "Capacitor Bank"
+cost = 16
+weight = 1.0
+repeatable = true
+modifiers = [SubResource("mod_1")]

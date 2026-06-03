@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CombatStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+base_damage = 25.0
+max_targets = 4
+chain_range = 180.0
+chain_falloff = 0.7
+energy_cost = 20.0
+cast_cooldown = 0.25
+cast_range = 600.0

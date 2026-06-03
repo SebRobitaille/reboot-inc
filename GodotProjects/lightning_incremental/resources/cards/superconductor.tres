@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ShopCard" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/shop_card.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/stat_modifier.gd" id="2"]
+
+[sub_resource type="Resource" id="mod_1"]
+script = ExtResource("2")
+stat = "chain_falloff"
+op = 1
+amount = 1.12
+
+[resource]
+script = ExtResource("1")
+title = "Superconductor"
+description = "Chains keep more punch (+12% damage retained per jump)."
+cost = 20
+weight = 0.8
+repeatable = true
+modifiers = [SubResource("mod_1")]

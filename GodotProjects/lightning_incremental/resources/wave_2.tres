@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WaveDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/wave_def.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/enemy_grunt.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/enemy_runner.tres" id="3"]
+
+[resource]
+script = ExtResource("1")
+defs = [ExtResource("2"), ExtResource("3")]
+counts = [8, 4]
+intervals = [0.7, 0.5]

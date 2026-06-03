@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ShopCard" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/shop_card.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/stat_modifier.gd" id="2"]
+
+[sub_resource type="Resource" id="mod_dmg"]
+script = ExtResource("2")
+stat = "base_damage"
+op = 0
+amount = 5.0
+
+[sub_resource type="Resource" id="mod_cost"]
+script = ExtResource("2")
+stat = "energy_cost"
+op = 1
+amount = 0.9
+
+[resource]
+script = ExtResource("1")
+title = "Tesla Tuning"
+cost = 24
+weight = 0.6
+repeatable = true
+modifiers = [SubResource("mod_dmg"), SubResource("mod_cost")]
