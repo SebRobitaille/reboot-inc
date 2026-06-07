@@ -6,15 +6,22 @@ extends Node
 var inflight: PackedFloat64Array      # essence currently traversing each ring
 var _accumulator: float = 0.0
 
-# Rolling 1-second stat accumulators (for the HUD).
+# Rolling 1-second stat accumulators (for the HUD + stats panel).
 var _stat_window: float = 0.0
 var _emitted_acc: float = 0.0
 var _captured_acc: float = 0.0
 var _lost_acc: float = 0.0
+# Per-ring captured / lost accumulators (parallel to the totals above).
+var _captured_ring: PackedFloat64Array
+var _lost_ring: PackedFloat64Array
 
 func _ready() -> void:
 	inflight = PackedFloat64Array()
 	inflight.resize(Balance.RING_COUNT)
+	_captured_ring = PackedFloat64Array()
+	_captured_ring.resize(Balance.RING_COUNT)
+	_lost_ring = PackedFloat64Array()
+	_lost_ring.resize(Balance.RING_COUNT)
 
 func _process(delta: float) -> void:
 	_accumulator += delta
@@ -53,6 +60,7 @@ func _tick() -> void:
 		var captured: float = minf(inflight[r], cap)
 		inflight[r] -= captured
 		captured_this_tick += captured
+		_captured_ring[r] += captured
 
 		# Remaining essence flows outward.
 		var outflow: float = inflight[r] * Balance.FLOW_FRACTION
@@ -61,6 +69,7 @@ func _tick() -> void:
 		# Drift loss on traversal (reduced by Stabilizers).
 		var drift: float = outflow * drift_loss
 		lost_this_tick += drift
+		_lost_ring[r] += drift
 		var kept: float = outflow - drift
 
 		if r < Balance.RING_COUNT - 1:
@@ -68,6 +77,7 @@ func _tick() -> void:
 		else:
 			# Past the outer ring -> reclaimed by the Rift.
 			lost_this_tick += kept
+			_lost_ring[r] += kept
 
 	# 3. Bank captured essence + the Flux throughput byproduct.
 	GameState.add_essence(captured_this_tick)
@@ -103,14 +113,34 @@ func _update_stat_window(delta: float) -> void:
 			"captured_per_sec": _captured_acc * inv,
 			"lost_per_sec": _lost_acc * inv,
 			"inflight_total": _inflight_total(),
+			"captured_by_ring": _scaled(_captured_ring, inv),
+			"lost_by_ring": _scaled(_lost_ring, inv),
+			"inflight_by_ring": inflight.duplicate(),
 		})
 		_stat_window = 0.0
 		_emitted_acc = 0.0
 		_captured_acc = 0.0
 		_lost_acc = 0.0
+		for r in Balance.RING_COUNT:
+			_captured_ring[r] = 0.0
+			_lost_ring[r] = 0.0
+
+func _scaled(arr: PackedFloat64Array, factor: float) -> PackedFloat64Array:
+	var out := arr.duplicate()
+	for i in out.size():
+		out[i] *= factor
+	return out
 
 func _inflight_total() -> float:
 	var t := 0.0
 	for v in inflight:
 		t += v
 	return t
+
+# --- Save / load (M5) ---
+func inflight_to_array() -> Array:
+	return Array(inflight)
+
+func inflight_from_array(a: Array) -> void:
+	for r in mini(a.size(), inflight.size()):
+		inflight[r] = float(a[r])

@@ -38,6 +38,8 @@ signal overclock_changed(state: Dictionary)
 # --- Run lifecycle ---
 ## Emitted after GameState resets to a fresh run (launch or collapse) so UI rebuilds.
 signal run_reset()
+## Emitted after a save file is loaded and applied (M5).
+signal game_loaded()
 
 # --- Prestige (M4) ---
 signal echoes_changed(echoes: float)

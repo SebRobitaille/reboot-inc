@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/stats_panel.gd" id="1_stats"]
+
+[node name="StatsPanel" type="PanelContainer"]
+script = ExtResource("1_stats")

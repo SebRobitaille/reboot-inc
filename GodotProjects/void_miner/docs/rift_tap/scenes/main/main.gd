@@ -7,6 +7,7 @@ const BoardScene := preload("res://scenes/main/Board.tscn")
 const BuildMenuScene := preload("res://scenes/ui/BuildMenu.tscn")
 const SurgeBannerScene := preload("res://scenes/ui/SurgeBanner.tscn")
 const PrestigeScreenScene := preload("res://scenes/ui/PrestigeScreen.tscn")
+const StatsPanelScene := preload("res://scenes/ui/StatsPanel.tscn")
 
 var _essence_label: Label
 var _flux_label: Label
@@ -14,11 +15,14 @@ var _rate_label: Label
 var _depth_label: Label
 var _echoes_label: Label
 var _prestige_screen: PanelContainer
+var _stats_panel: PanelContainer
 
 func _ready() -> void:
 	# Loadout first: the shop reads GameState.catalog and the board reads
 	# GameState.placements during their _ready, so state must exist before mount.
 	GameState.setup_run()
+	# Restore a save over the fresh run if one exists (no offline rewards).
+	SaveManager.load_game()
 
 	_build_ui()
 
@@ -34,7 +38,7 @@ func _ready() -> void:
 	_on_depth_or_cores_changed()
 	_on_echoes_changed(PrestigeManager.echoes)
 
-	print("[Rift Tap] M4 running. Economy tick = %s s." % Balance.ECON_TICK)
+	print("[Rift Tap] M5 running. Economy tick = %s s." % Balance.ECON_TICK)
 
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
@@ -46,7 +50,7 @@ func _build_ui() -> void:
 	layer.add_child(panel)
 
 	var title := Label.new()
-	title.text = "RIFT TAP — M4"
+	title.text = "RIFT TAP — M5"
 	panel.add_child(title)
 
 	_essence_label = Label.new()
@@ -99,6 +103,17 @@ func _build_ui() -> void:
 	prestige_toggle.text = "Prestige ▸"
 	prestige_toggle.pressed.connect(func() -> void: _prestige_screen.visible = not _prestige_screen.visible)
 	panel.add_child(prestige_toggle)
+
+	# M5 stats panel (hidden overlay) + a HUD toggle to open it.
+	_stats_panel = StatsPanelScene.instantiate()
+	_stats_panel.position = Vector2(180, 90)
+	_stats_panel.hide()
+	layer.add_child(_stats_panel)
+
+	var stats_toggle := Button.new()
+	stats_toggle.text = "Stats ▸"
+	stats_toggle.pressed.connect(func() -> void: _stats_panel.visible = not _stats_panel.visible)
+	panel.add_child(stats_toggle)
 
 func _on_essence_changed(value: float) -> void:
 	_essence_label.text = "Essence: %s" % NumberFormat.format(value)

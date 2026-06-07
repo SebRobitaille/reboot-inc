@@ -120,6 +120,21 @@ func _tick_plateau(delta: float) -> void:
 	_last_collapse_value = value
 	EventBus.prestige_ready.emit(value, glow)
 
+# --- Save / load (M5) ---
+func to_dict() -> Dictionary:
+	var owned_out := []
+	for id in _owned:
+		owned_out.append(String(id))
+	return { "echoes": echoes, "owned": owned_out }
+
+func from_dict(d: Dictionary) -> void:
+	echoes = float(d.get("echoes", 0.0))
+	_owned.clear()
+	for id in d.get("owned", []):
+		_owned[StringName(id)] = true
+	apply_modifiers()
+	EventBus.echoes_changed.emit(echoes)
+
 # --- Loading ---
 
 func _load_catalog() -> void:

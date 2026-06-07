@@ -219,6 +219,47 @@ func find_in_catalog(id: StringName) -> BuildingData:
 			return d
 	return null
 
+# --- Save / load (M5) ---
+## Run state only. Persistent prestige_* factors are recomputed from owned nodes
+## on load (PrestigeManager.apply_modifiers), so they aren't serialized here.
+func to_dict() -> Dictionary:
+	var places := []
+	for p in placements:
+		var data: BuildingData = p["data"]
+		places.append({ "id": String(data.id), "ring": p["ring"], "slot": p["slot"] })
+	var owned_out := {}
+	for k in _owned:
+		owned_out[String(k)] = _owned[k]
+	return {
+		"essence": essence, "flux": flux, "rift_cores": rift_cores, "depth": depth,
+		"extraction_mult": extraction_mult, "collection_mult": collection_mult,
+		"placements": places, "owned": owned_out,
+	}
+
+func from_dict(d: Dictionary) -> void:
+	essence = float(d.get("essence", 0.0))
+	flux = float(d.get("flux", 0.0))
+	rift_cores = int(d.get("rift_cores", 0))
+	depth = int(d.get("depth", 0))
+	extraction_mult = float(d.get("extraction_mult", 1.0))
+	collection_mult = float(d.get("collection_mult", 1.0))
+	surge_emission_mult = 1.0
+	surge_collection_mult = 1.0
+	placements.clear()
+	_owned.clear()
+	_occupied.clear()
+	for p in d.get("placements", []):
+		var data := find_in_catalog(StringName(p["id"]))
+		if data:
+			_place(data, int(p["ring"]), int(p["slot"]))
+	for k in d.get("owned", {}):
+		_owned[StringName(k)] = int(d["owned"][k])
+	EventBus.essence_changed.emit(essence)
+	EventBus.flux_changed.emit(flux)
+	EventBus.rift_cores_changed.emit(rift_cores)
+	EventBus.depth_changed.emit(depth)
+	EventBus.run_reset.emit()
+
 # --- Internals ---
 
 func _placement_bonus(data: BuildingData, ring: int) -> float:

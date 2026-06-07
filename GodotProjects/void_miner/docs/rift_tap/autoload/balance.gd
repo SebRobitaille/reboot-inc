@@ -75,6 +75,9 @@ static func echoes_gained(depth: int, cores: int) -> float:
 
 # Base seconds between auto-clicks at AUTOCLICK strength 1.0 (higher strength = faster).
 const AUTOCLICK_INTERVAL: float = 2.0
+
+# --- Persistence (M5) ---
+const AUTOSAVE_INTERVAL: float = 15.0   # seconds between background autosaves
 # Collapse value must grow by at least this fraction per second to count as "still
 # growing"; below it, the Collapse button glows (plateau = time to prestige).
 const PRESTIGE_PLATEAU_GROWTH: float = 0.02
