@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="BuildingData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/building_data.gd" id="1_bd"]
+
+[resource]
+script = ExtResource("1_bd")
+id = &"channeler"
+display_name = "Channeler"
+category = 0
+buy_currency = 0
+base_cost = 10.0
+cost_growth = 1.13
+base_emission = 5.0
+base_collect = 0.0
+flux_bonus = 0.0
+drift_reduction = 0.0
+preferred_ring = 0
+unlock_requirement = 0
+description = "Steady essence emitter. Best on inner rings, close to the portal."
