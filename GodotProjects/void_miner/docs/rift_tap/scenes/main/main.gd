@@ -18,6 +18,15 @@ var _prestige_screen: PanelContainer
 var _stats_panel: PanelContainer
 
 func _ready() -> void:
+	# Dev balance harness (M6 §11): run the sweep headless and quit. Never touches
+	# the player save or builds the game UI.
+	if "--balance" in OS.get_cmdline_user_args():
+		GameState.setup_run()
+		SaveManager.enabled = false
+		BalanceSim.new().run()
+		get_tree().quit()
+		return
+
 	# Loadout first: the shop reads GameState.catalog and the board reads
 	# GameState.placements during their _ready, so state must exist before mount.
 	GameState.setup_run()

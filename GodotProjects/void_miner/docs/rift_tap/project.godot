@@ -1,5 +1,10 @@
 ; Engine configuration file.
-; Minimal project for Rift Tap M0–M1. Open this folder directly in Godot 4.6.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -11,7 +16,6 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 
 [autoload]
 
-; Load order matters: EventBus + Balance have no deps and must come first.
 EventBus="*res://autoload/event_bus.gd"
 Balance="*res://autoload/balance.gd"
 NumberFormat="*res://autoload/number_format.gd"

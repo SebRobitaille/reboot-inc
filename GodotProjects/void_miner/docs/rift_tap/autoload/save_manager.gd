@@ -7,6 +7,8 @@ extends Node
 const SAVE_PATH := "user://save.json"
 const SAVE_VERSION := 1
 
+## Set false by the balance harness so its throwaway state never overwrites a save.
+var enabled: bool = true
 var _autosave_accum: float = 0.0
 
 func _ready() -> void:
@@ -33,6 +35,8 @@ func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 func save_game() -> void:
+	if not enabled:
+		return
 	var data := {
 		"version": SAVE_VERSION,
 		"saved_unix": Time.get_unix_time_from_system(),

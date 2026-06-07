@@ -47,7 +47,11 @@ const SURGE_INTERVAL: float = 180.0     # gap between surges
 
 # Rubber-band threshold.
 const PEAK_WINDOW: float = 120.0        # rolling window for peak capture-rate (~2 min)
-const SURGE_FACTOR: float = 3.0         # how far above recent peak you must push
+# How far above your recent peak you must SUSTAIN capture across the window to clear.
+# Tuned via tools/balance_sim.gd: with the x-WINDOW threshold below, the clearable
+# band is ~1.0-1.3 (factor 3.0 was unclearable). 1.1 = a real prep test that a fresh
+# run clears ~3 surges into before the board walls and you prestige to go deeper.
+const SURGE_FACTOR: float = 1.1
 const DEPTH_THRESHOLD_SCALAR: float = 0.1   # threshold grows per depth tier
 
 ## Total destabilization (essence captured during the window) needed to clear.
