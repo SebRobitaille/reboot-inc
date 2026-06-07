@@ -30,7 +30,9 @@ func _process(delta: float) -> void:
 # --- Collapse ---
 
 func echoes_on_collapse() -> float:
-	return floor(Balance.echoes_gained(GameState.depth, GameState.rift_cores) * _echo_mult)
+	# Echo Chambers placed this run multiply the banked total (M6).
+	var mult := _echo_mult * GameState.building_echo_mult()
+	return floor(Balance.echoes_gained(GameState.depth, GameState.rift_cores) * mult)
 
 func can_collapse() -> bool:
 	return echoes_on_collapse() > 0.0
@@ -78,9 +80,13 @@ func buy_node(node: PrestigeNode) -> bool:
 ## persistent prestige_* factors (and our local auto-click / echo state).
 func apply_modifiers() -> void:
 	var sums := {}
+	var unlocked := {}
 	for node in catalog:
 		if _owned.has(node.id):
 			sums[node.effect] = sums.get(node.effect, 0.0) + node.magnitude
+			if node.effect == PrestigeNode.Effect.UNLOCK_BUILDING and node.unlock_target != &"":
+				unlocked[node.unlock_target] = true
+	GameState.prestige_unlocked = unlocked
 
 	GameState.prestige_extraction_mult = 1.0 + sums.get(PrestigeNode.Effect.EXTRACTION_MULT, 0.0)
 	GameState.prestige_collection_mult = 1.0 + sums.get(PrestigeNode.Effect.COLLECTION_MULT, 0.0)

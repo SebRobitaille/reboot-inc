@@ -40,8 +40,9 @@ func _tick() -> void:
 	var emission := GameState.emission_by_ring()
 	var capacity := GameState.collection_by_ring()
 	var tick := Balance.ECON_TICK
-	# Support modifiers (M2): Stabilizers cut drift, Refineries boost Flux.
-	var drift_loss := Balance.DRIFT_LOSS * GameState.global_drift_mult()
+	# Support modifiers: Stabilizers (global) + Conveyors (per-ring) cut drift.
+	var global_drift := Balance.DRIFT_LOSS * GameState.global_drift_mult()
+	var ring_drift := GameState.drift_mult_by_ring()
 
 	# 1. Emit into rings (extractors; in M1 all emission is at ring 0).
 	var emitted_this_tick := 0.0
@@ -52,6 +53,8 @@ func _tick() -> void:
 
 	var captured_this_tick := 0.0
 	var lost_this_tick := 0.0
+	var lost_ring_tick := PackedFloat64Array()
+	lost_ring_tick.resize(Balance.RING_COUNT)
 
 	# 2. Flow inner -> outer.
 	for r in Balance.RING_COUNT:
@@ -66,22 +69,34 @@ func _tick() -> void:
 		var outflow: float = inflight[r] * Balance.FLOW_FRACTION
 		inflight[r] -= outflow
 
-		# Drift loss on traversal (reduced by Stabilizers).
-		var drift: float = outflow * drift_loss
-		lost_this_tick += drift
-		_lost_ring[r] += drift
+		# Drift loss on traversal (reduced by Stabilizers globally + Conveyors here).
+		var drift: float = outflow * global_drift * ring_drift[r]
+		lost_ring_tick[r] += drift
 		var kept: float = outflow - drift
 
 		if r < Balance.RING_COUNT - 1:
 			inflight[r + 1] += kept
 		else:
-			# Past the outer ring -> reclaimed by the Rift.
-			lost_this_tick += kept
-			_lost_ring[r] += kept
+			lost_ring_tick[r] += kept   # past the outer ring -> reclaimed by the Rift
+	for r in Balance.RING_COUNT:
+		lost_this_tick += lost_ring_tick[r]
 
-	# 3. Bank captured essence + the Flux throughput byproduct.
-	GameState.add_essence(captured_this_tick)
+	# 3. Flux from collector throughput (computed before any siphon top-up).
 	GameState.add_flux(captured_this_tick * Balance.FLUX_RATE * GameState.flux_mult())
+
+	# 4. Void Siphons reclaim a fraction of Rift loss as extra captured essence.
+	var siphon := GameState.siphon_fraction()
+	if siphon > 0.0:
+		var keep := 1.0 - siphon
+		captured_this_tick += lost_this_tick * siphon
+		lost_this_tick *= keep
+		for r in Balance.RING_COUNT:
+			lost_ring_tick[r] *= keep
+
+	# 5. Commit per-ring loss + bank essence.
+	for r in Balance.RING_COUNT:
+		_lost_ring[r] += lost_ring_tick[r]
+	GameState.add_essence(captured_this_tick)
 
 	_emitted_acc += emitted_this_tick
 	_captured_acc += captured_this_tick

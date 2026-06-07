@@ -23,17 +23,28 @@ enum Currency { ESSENCE, FLUX, RIFT_CORE }
 @export var base_emission: float = 0.0   # essence/sec injected (EXTRACTOR)
 @export var base_collect: float = 0.0    # essence/sec captured (COLLECTOR)
 
-# --- Support effects (SUPPORT category) ---
+# --- Extractor scaling ---
+## Resonant Lance: emission is multiplied by (1 + emission_depth_scale * depth).
+@export var emission_depth_scale: float = 0.0
+
+# --- Support / special effects ---
 ## Refinery: each adds this to the global Flux multiplier (0.5 = +50%).
 @export var flux_bonus: float = 0.0
 ## Stabilizer: each reduces global drift-loss by this fraction (0.3 = -30%),
 ## applied multiplicatively and floored by Balance.MIN_DRIFT_MULT.
 @export var drift_reduction: float = 0.0
+## Conveyor Node: reduces drift-loss in ITS ring by this fraction (0.5 = -50%).
+@export var ring_drift_reduction: float = 0.0
+## Void Siphon: each reclaims this fraction of essence the Rift would take.
+@export var siphon_fraction: float = 0.0
+## Echo Chamber: each adds this to the Echoes-on-collapse multiplier (0.25 = +25%).
+@export var echo_bonus: float = 0.0
 
 # --- Placement & unlocks ---
 ## Soft hint: placing on this ring grants Balance.PREFERRED_RING_BONUS. -1 = none.
 @export var preferred_ring: int = -1
 ## Rift Cores required before this type can be bought. 0 = available from turn 1.
+## A building also unlocks if a prestige node unlocks it (GameState.prestige_unlocked).
 @export var unlock_requirement: int = 0
 
 # --- Presentation ---

@@ -33,6 +33,8 @@ static func building_cost(base_cost: float, growth: float, owned: int) -> float:
 const PREFERRED_RING_BONUS: float = 0.25
 # Stabilizers can't drive drift-loss below this fraction of its base value.
 const MIN_DRIFT_MULT: float = 0.1
+# Void Siphons can reclaim at most this fraction of Rift-lost essence (M6).
+const MAX_SIPHON_FRACTION: float = 0.75
 
 # --- Surges (M3) ---
 # Phase durations.

@@ -15,9 +15,11 @@ enum Branch { EXTRACTION, COLLECTION, RESONANCE }
 ##  AUTOCLICK        — auto-tap strength (taps the portal + collects on a timer)
 ##  CORE_GAIN        — extra Rift Cores per cleared surge
 ##  PREPLACE_STARTER — extra Channelers pre-placed at run start
+##  UNLOCK_BUILDING  — permanently unlocks the building in `unlock_target`
 enum Effect {
 	EXTRACTION_MULT, COLLECTION_MULT, FLUX_MULT, DRIFT_REDUCTION,
 	START_ESSENCE, AUTOCLICK, CORE_GAIN, ECHO_MULT, PREPLACE_STARTER,
+	UNLOCK_BUILDING,
 }
 
 @export var id: StringName
@@ -28,4 +30,6 @@ enum Effect {
 @export var cost: float = 1.0              # Echoes
 ## Single prerequisite node id (empty = a tree root). Kept to one for M4 simplicity.
 @export var prereq: StringName = &""
+## For UNLOCK_BUILDING: the BuildingData id this node permanently unlocks (M6).
+@export var unlock_target: StringName = &""
 @export var description: String = ""

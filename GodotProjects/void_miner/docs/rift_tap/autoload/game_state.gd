@@ -28,6 +28,8 @@ var prestige_drift_mult: float = 1.0
 var prestige_start_essence: float = 0.0
 var prestige_core_bonus: int = 0
 var prestige_preplace: int = 0
+## Building ids permanently unlocked by prestige nodes (M6). Recomputed on load.
+var prestige_unlocked: Dictionary = {}   # StringName -> true
 
 ## Every buildable BuildingData, loaded from BUILDINGS_DIR at startup. The shop
 ## reads this so adding a .tres adds content with no code change.
@@ -93,7 +95,9 @@ func emission_by_ring() -> PackedFloat64Array:
 	for p in placements:
 		var data: BuildingData = p["data"]
 		if data.category == BuildingData.Category.EXTRACTOR:
-			arr[p["ring"]] += data.base_emission * _placement_bonus(data, p["ring"])
+			# Resonant Lance and friends scale emission with depth.
+			var scaled: float = data.base_emission * (1.0 + data.emission_depth_scale * depth)
+			arr[p["ring"]] += scaled * _placement_bonus(data, p["ring"])
 	for i in arr.size():
 		arr[i] *= extraction_mult * surge_emission_mult * prestige_extraction_mult
 	return arr
@@ -129,6 +133,33 @@ func global_drift_mult() -> float:
 			m *= (1.0 - data.drift_reduction)
 	return maxf(m * prestige_drift_mult, Balance.MIN_DRIFT_MULT)
 
+## Per-ring drift multiplier from Conveyor Nodes placed in each ring (M6). The
+## economy multiplies this by the global factor, then floors the result.
+func drift_mult_by_ring() -> PackedFloat64Array:
+	var arr := PackedFloat64Array()
+	arr.resize(Balance.RING_COUNT)
+	for i in arr.size():
+		arr[i] = 1.0
+	for p in placements:
+		var data: BuildingData = p["data"]
+		if data.ring_drift_reduction > 0.0:
+			arr[p["ring"]] *= (1.0 - data.ring_drift_reduction)
+	return arr
+
+## Fraction of Rift-reclaimed essence reclaimed back by Void Siphons (M6), <1.
+func siphon_fraction() -> float:
+	var f := 0.0
+	for p in placements:
+		f += p["data"].siphon_fraction
+	return minf(f, Balance.MAX_SIPHON_FRACTION)
+
+## Echoes-on-collapse multiplier from Echo Chambers placed this run (M6).
+func building_echo_mult() -> float:
+	var m := 1.0
+	for p in placements:
+		m += p["data"].echo_bonus
+	return m
+
 # --- Buy + place ---
 
 func owned(id: StringName) -> int:
@@ -144,8 +175,10 @@ func balance_for(currency: BuildingData.Currency) -> float:
 		BuildingData.Currency.RIFT_CORE: return float(rift_cores)
 	return 0.0
 
+## Unlocked by reaching the Rift-Core requirement in-run, OR permanently by a
+## prestige node (M6) — either path opens the building.
 func is_unlocked(data: BuildingData) -> bool:
-	return rift_cores >= data.unlock_requirement
+	return rift_cores >= data.unlock_requirement or prestige_unlocked.has(data.id)
 
 func can_afford(data: BuildingData) -> bool:
 	return is_unlocked(data) and balance_for(data.buy_currency) >= current_cost(data)

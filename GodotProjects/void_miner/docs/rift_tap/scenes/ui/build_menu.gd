@@ -4,6 +4,7 @@ extends VBoxContainer
 
 const AFFORD_COLOR := Color.WHITE
 const UNAFFORD_COLOR := Color(1.0, 0.55, 0.55)
+const LOCKED_COLOR := Color(0.5, 0.5, 0.5)
 
 var _rows: Array[Dictionary] = []   # [{ data, button }]
 
@@ -13,7 +14,9 @@ func _ready() -> void:
 	EventBus.essence_changed.connect(_on_balance_changed)
 	EventBus.flux_changed.connect(_on_balance_changed)
 	EventBus.building_placed.connect(_on_placed)
-	EventBus.run_reset.connect(_refresh)   # owned counts reset -> costs back to base
+	EventBus.run_reset.connect(_refresh)              # owned counts reset -> base costs
+	EventBus.rift_cores_changed.connect(_on_balance_changed)        # may unlock a building
+	EventBus.prestige_node_purchased.connect(_on_node_purchased)   # may unlock a building
 	_refresh()
 
 func _build() -> void:
@@ -42,10 +45,20 @@ func _on_placed(_data: BuildingData, _ring: int, _slot: int) -> void:
 	# Cost of that type just rose; refresh all labels.
 	_refresh()
 
+func _on_node_purchased(_node) -> void:
+	_refresh()
+
 func _refresh() -> void:
 	for r in _rows:
 		var data: BuildingData = r["data"]
 		var b: Button = r["button"]
+		if not GameState.is_unlocked(data):
+			b.text = "🔒 %s — needs %d Cores or prestige" % [data.display_name, data.unlock_requirement]
+			b.disabled = true
+			b.button_pressed = false
+			b.add_theme_color_override("font_color", LOCKED_COLOR)
+			continue
+		b.disabled = false
 		var cost := GameState.current_cost(data)
 		b.text = "%s — %s %s" % [data.display_name, NumberFormat.format(cost), _currency_label(data.buy_currency)]
 		# Keep selectable even when unaffordable (arm now, save up); just signal it.

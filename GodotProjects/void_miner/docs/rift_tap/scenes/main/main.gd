@@ -38,7 +38,7 @@ func _ready() -> void:
 	_on_depth_or_cores_changed()
 	_on_echoes_changed(PrestigeManager.echoes)
 
-	print("[Rift Tap] M5 running. Economy tick = %s s." % Balance.ECON_TICK)
+	print("[Rift Tap] M6 running. Economy tick = %s s." % Balance.ECON_TICK)
 
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
@@ -50,7 +50,7 @@ func _build_ui() -> void:
 	layer.add_child(panel)
 
 	var title := Label.new()
-	title.text = "RIFT TAP — M5"
+	title.text = "RIFT TAP — M6"
 	panel.add_child(title)
 
 	_essence_label = Label.new()

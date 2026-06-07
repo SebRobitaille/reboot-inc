@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BuildingData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/building_data.gd" id="1_bd"]
+
+[resource]
+script = ExtResource("1_bd")
+id = &"conveyor_node"
+display_name = "Conveyor Node"
+category = 1
+buy_currency = 1
+base_cost = 8.0
+cost_growth = 1.15
+base_emission = 0.0
+base_collect = 2.0
+ring_drift_reduction = 0.5
+preferred_ring = 1
+unlock_requirement = 2
+description = "Collector hybrid: cuts drift-loss in its ring by 50% and collects a little."
