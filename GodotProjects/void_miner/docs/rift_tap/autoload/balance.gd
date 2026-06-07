@@ -65,10 +65,16 @@ const OVERCLOCK_DURATION: float = 15.0  # seconds of burst
 const OVERCLOCK_COOLDOWN: float = 60.0  # cooldown after it ends
 const OVERCLOCK_UNLOCK_CORES: int = 1   # unlocked once you've earned this many cores
 
-# --- Echoes (M4) — placeholder ---
+# --- Echoes / prestige (M4) ---
 const ECHO_K: float = 1.0
 const ECHO_EXP: float = 1.5
 const CORE_BONUS: float = 0.25
 
 static func echoes_gained(depth: int, cores: int) -> float:
 	return floor(ECHO_K * pow(float(depth), ECHO_EXP) * (1.0 + cores * CORE_BONUS))
+
+# Base seconds between auto-clicks at AUTOCLICK strength 1.0 (higher strength = faster).
+const AUTOCLICK_INTERVAL: float = 2.0
+# Collapse value must grow by at least this fraction per second to count as "still
+# growing"; below it, the Collapse button glows (plateau = time to prestige).
+const PRESTIGE_PLATEAU_GROWTH: float = 0.02

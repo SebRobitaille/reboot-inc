@@ -19,6 +19,16 @@ var collection_mult: float = 1.0
 var surge_emission_mult: float = 1.0
 var surge_collection_mult: float = 1.0
 
+# Persistent prestige factors (M4). Written by PrestigeManager from owned nodes;
+# they survive reset_run_state() and stack on top of the per-run multipliers.
+var prestige_extraction_mult: float = 1.0
+var prestige_collection_mult: float = 1.0
+var prestige_flux_mult: float = 1.0
+var prestige_drift_mult: float = 1.0
+var prestige_start_essence: float = 0.0
+var prestige_core_bonus: int = 0
+var prestige_preplace: int = 0
+
 ## Every buildable BuildingData, loaded from BUILDINGS_DIR at startup. The shop
 ## reads this so adding a .tres adds content with no code change.
 var catalog: Array[BuildingData] = []
@@ -85,7 +95,7 @@ func emission_by_ring() -> PackedFloat64Array:
 		if data.category == BuildingData.Category.EXTRACTOR:
 			arr[p["ring"]] += data.base_emission * _placement_bonus(data, p["ring"])
 	for i in arr.size():
-		arr[i] *= extraction_mult * surge_emission_mult
+		arr[i] *= extraction_mult * surge_emission_mult * prestige_extraction_mult
 	return arr
 
 ## Per-ring summed collector capacity, with global + preferred-ring bonuses applied.
@@ -97,26 +107,27 @@ func collection_by_ring() -> PackedFloat64Array:
 		if data.category == BuildingData.Category.COLLECTOR:
 			arr[p["ring"]] += data.base_collect * _placement_bonus(data, p["ring"])
 	for i in arr.size():
-		arr[i] *= collection_mult * surge_collection_mult
+		arr[i] *= collection_mult * surge_collection_mult * prestige_collection_mult
 	return arr
 
-## Global Flux multiplier from all Refineries (1.0 = no support).
+## Global Flux multiplier from all Refineries plus the prestige Flux factor.
 func flux_mult() -> float:
 	var m := 1.0
 	for p in placements:
 		var data: BuildingData = p["data"]
 		if data.category == BuildingData.Category.SUPPORT:
 			m += data.flux_bonus
-	return m
+	return m * prestige_flux_mult
 
-## Global drift-loss multiplier from all Stabilizers, floored so loss never vanishes.
+## Global drift-loss multiplier from Stabilizers + prestige, floored so loss never
+## fully vanishes.
 func global_drift_mult() -> float:
 	var m := 1.0
 	for p in placements:
 		var data: BuildingData = p["data"]
 		if data.category == BuildingData.Category.SUPPORT:
 			m *= (1.0 - data.drift_reduction)
-	return maxf(m, Balance.MIN_DRIFT_MULT)
+	return maxf(m * prestige_drift_mult, Balance.MIN_DRIFT_MULT)
 
 # --- Buy + place ---
 
@@ -154,22 +165,53 @@ func try_place(data: BuildingData, ring: int, slot: int) -> bool:
 	EventBus.building_placed.emit(data, ring, slot)
 	return true
 
-# --- Setup ---
+# --- Setup & run reset ---
 
-## M2 starter: load the catalog, then place the two free starters via the data
-## path so the economy runs on launch (mirrors M1's feel). Everything beyond these
-## is bought through the shop.
-func setup_m2_starter() -> void:
+## Called once at launch: load the catalog, then start the first run.
+func setup_run() -> void:
 	_load_catalog()
+	reset_run_state()
+
+## Reset all per-run state to a fresh start, seeding the prestige bootstrap
+## (starting Essence + pre-placed Channelers). Persistent prestige_* factors are
+## left untouched. Emits run_reset so UI rebuilds. Used at launch and on collapse.
+func reset_run_state() -> void:
+	essence = prestige_start_essence
+	flux = 0.0
+	rift_cores = 0
+	depth = 0
+	extraction_mult = 1.0
+	collection_mult = 1.0
+	surge_emission_mult = 1.0
+	surge_collection_mult = 1.0
 	placements.clear()
 	_owned.clear()
 	_occupied.clear()
+	_place_starters()
+	EventBus.essence_changed.emit(essence)
+	EventBus.flux_changed.emit(flux)
+	EventBus.rift_cores_changed.emit(rift_cores)
+	EventBus.depth_changed.emit(depth)
+	EventBus.run_reset.emit()
+
+## The two free starters (mirrors M1's feel), plus any prestige pre-placed
+## Channelers filling the next open inner slots.
+func _place_starters() -> void:
 	var channeler := find_in_catalog(&"channeler")
 	var sprite := find_in_catalog(&"gather_sprite")
 	if channeler:
 		_place(channeler, 0, 0)
 	if sprite:
 		_place(sprite, 2, 0)   # two rings out on purpose — placement still matters
+	if channeler:
+		var extras := prestige_preplace
+		for ring in Balance.RING_COUNT:
+			for slot in Balance.SLOTS_PER_RING:
+				if extras <= 0:
+					return
+				if is_slot_free(ring, slot):
+					_place(channeler, ring, slot)
+					extras -= 1
 
 func find_in_catalog(id: StringName) -> BuildingData:
 	for d in catalog:

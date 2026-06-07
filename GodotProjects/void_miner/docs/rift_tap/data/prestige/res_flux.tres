@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"res_flux"
+display_name = "Flux Attunement"
+tree = 2
+effect = 2
+magnitude = 0.5
+cost = 3.0
+prereq = &""
+description = "+50% Flux generation."

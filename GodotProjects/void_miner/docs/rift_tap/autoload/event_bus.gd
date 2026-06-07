@@ -35,5 +35,13 @@ signal rift_cores_changed(cores: int)
 ## State dict: { unlocked: bool, active: bool, on_cooldown: bool, time_left: float }
 signal overclock_changed(state: Dictionary)
 
-# --- Prestige (M4+) ---
+# --- Run lifecycle ---
+## Emitted after GameState resets to a fresh run (launch or collapse) so UI rebuilds.
+signal run_reset()
+
+# --- Prestige (M4) ---
+signal echoes_changed(echoes: float)
+signal prestige_node_purchased(node)
+## Live collapse value + whether to glow the Collapse button (plateau reached).
+signal prestige_ready(echoes_on_collapse: float, glow: bool)
 signal prestige_completed(echoes: float)

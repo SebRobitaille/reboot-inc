@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"res_autotap"
+display_name = "Auto-Tap"
+tree = 2
+effect = 5
+magnitude = 1.0
+cost = 4.0
+prereq = &"res_headstart"
+description = "Automatically taps the portal and collects, removing manual clicking."

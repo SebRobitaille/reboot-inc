@@ -12,7 +12,19 @@ func _ready() -> void:
 	_build_grid()
 	EventBus.build_selection_changed.connect(_on_selection_changed)
 	EventBus.building_placed.connect(_on_building_placed)
-	# Reflect any placements that already exist (the starter loadout).
+	EventBus.run_reset.connect(_on_run_reset)
+	_reflect_placements()
+
+## Clear every slot and redraw from the fresh placements (called on collapse).
+func _on_run_reset() -> void:
+	for key in _slot_buttons:
+		var b: Button = _slot_buttons[key]
+		for child in b.get_children():
+			child.queue_free()
+		b.disabled = false
+	_reflect_placements()
+
+func _reflect_placements() -> void:
 	for p in GameState.placements:
 		_mark_slot(p["data"], p["ring"], p["slot"])
 

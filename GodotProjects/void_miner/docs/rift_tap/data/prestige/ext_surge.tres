@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"ext_surge"
+display_name = "Surge Channels"
+tree = 0
+effect = 0
+magnitude = 0.5
+cost = 3.0
+prereq = &"ext_pulse"
+description = "+50% extractor emission."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"ext_singularity"
+display_name = "Singularity Core"
+tree = 0
+effect = 0
+magnitude = 3.0
+cost = 40.0
+prereq = &"ext_overdrive"
+description = "+300% extractor emission."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"res_affinity"
+display_name = "Core Affinity"
+tree = 2
+effect = 6
+magnitude = 1.0
+cost = 8.0
+prereq = &"res_echo"
+description = "+1 Rift Core per cleared surge."

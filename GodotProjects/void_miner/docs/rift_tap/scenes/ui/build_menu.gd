@@ -13,6 +13,7 @@ func _ready() -> void:
 	EventBus.essence_changed.connect(_on_balance_changed)
 	EventBus.flux_changed.connect(_on_balance_changed)
 	EventBus.building_placed.connect(_on_placed)
+	EventBus.run_reset.connect(_refresh)   # owned counts reset -> costs back to base
 	_refresh()
 
 func _build() -> void:

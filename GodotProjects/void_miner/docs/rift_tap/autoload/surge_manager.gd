@@ -77,7 +77,7 @@ func _resolve(success: bool) -> void:
 	_phase_time = 0.0
 	_idle_target = Balance.SURGE_INTERVAL
 	if success:
-		GameState.add_rift_cores(Balance.CORES_PER_CLEAR)
+		GameState.add_rift_cores(Balance.CORES_PER_CLEAR + GameState.prestige_core_bonus)
 		GameState.advance_depth()
 		_emit_overclock()   # earning a core may have just unlocked Overclock
 	EventBus.surge_resolved.emit(success)

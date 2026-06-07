@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"col_reach"
+display_name = "Long Reach"
+tree = 1
+effect = 1
+magnitude = 0.5
+cost = 3.0
+prereq = &"col_nets"
+description = "+50% collector capacity."
