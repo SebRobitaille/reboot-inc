@@ -23,9 +23,20 @@ enum Currency { ESSENCE, FLUX, RIFT_CORE }
 @export var base_emission: float = 0.0   # essence/sec injected (EXTRACTOR)
 @export var base_collect: float = 0.0    # essence/sec captured (COLLECTOR)
 
-# --- Extractor scaling ---
+# --- Extractor scaling / specials ---
 ## Resonant Lance: emission is multiplied by (1 + emission_depth_scale * depth).
 @export var emission_depth_scale: float = 0.0
+## Rupture Drill: emit only every burst_period ticks, concentrating the period's
+## worth into one flood (0 = steady emission). Average output is unchanged.
+@export var burst_period: int = 0
+## Twin Portal: re-emits this fraction of ring-0's base emission into its own ring,
+## opening a second emission source deeper in.
+@export var mirror_fraction: float = 0.0
+
+# --- Collector reach ---
+## Magnet Pylon: also collects from rings within this many slots of its own
+## (0 = own ring only; 1 = +/-1 ring of coverage).
+@export var collect_radius: int = 0
 
 # --- Support / special effects ---
 ## Refinery: each adds this to the global Flux multiplier (0.5 = +50%).

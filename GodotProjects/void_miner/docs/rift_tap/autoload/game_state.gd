@@ -97,7 +97,17 @@ func emission_by_ring() -> PackedFloat64Array:
 		if data.category == BuildingData.Category.EXTRACTOR:
 			# Resonant Lance and friends scale emission with depth.
 			var scaled: float = data.base_emission * (1.0 + data.emission_depth_scale * depth)
+			# Rupture Drill floods every burst_period ticks (avg output unchanged).
+			if data.burst_period > 0:
+				scaled = scaled * data.burst_period if Economy.tick_count % data.burst_period == 0 else 0.0
 			arr[p["ring"]] += scaled * _placement_bonus(data, p["ring"])
+	# Twin Portals mirror ring-0's base emission into their own ring (read after the
+	# base pass, before the global multipliers, so mirrors scale with them too).
+	var ring0_base := arr[0]
+	for p in placements:
+		var data: BuildingData = p["data"]
+		if data.mirror_fraction > 0.0:
+			arr[p["ring"]] += ring0_base * data.mirror_fraction
 	for i in arr.size():
 		arr[i] *= extraction_mult * surge_emission_mult * prestige_extraction_mult
 	return arr
@@ -109,7 +119,13 @@ func collection_by_ring() -> PackedFloat64Array:
 	for p in placements:
 		var data: BuildingData = p["data"]
 		if data.category == BuildingData.Category.COLLECTOR:
-			arr[p["ring"]] += data.base_collect * _placement_bonus(data, p["ring"])
+			# Magnet Pylon (collect_radius > 0) also covers neighbouring rings.
+			var own_ring: int = p["ring"]
+			for rr in range(own_ring - data.collect_radius, own_ring + data.collect_radius + 1):
+				if rr < 0 or rr >= Balance.RING_COUNT:
+					continue
+				var bonus: float = _placement_bonus(data, own_ring) if rr == own_ring else 1.0
+				arr[rr] += data.base_collect * bonus
 	for i in arr.size():
 		arr[i] *= collection_mult * surge_collection_mult * prestige_collection_mult
 	return arr

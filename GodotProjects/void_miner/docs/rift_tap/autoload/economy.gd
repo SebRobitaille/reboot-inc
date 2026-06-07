@@ -4,6 +4,7 @@ extends Node
 ## and must NEVER feed back into this simulation.
 
 var inflight: PackedFloat64Array      # essence currently traversing each ring
+var tick_count: int = 0               # economy ticks elapsed (drives burst timing)
 var _accumulator: float = 0.0
 
 # Rolling 1-second stat accumulators (for the HUD + stats panel).
@@ -37,6 +38,7 @@ func _process(delta: float) -> void:
 	_update_stat_window(delta)
 
 func _tick() -> void:
+	tick_count += 1
 	var emission := GameState.emission_by_ring()
 	var capacity := GameState.collection_by_ring()
 	var tick := Balance.ECON_TICK

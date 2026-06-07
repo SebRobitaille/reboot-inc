@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PrestigeNode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/prestige_node.gd" id="1_pn"]
+
+[resource]
+script = ExtResource("1_pn")
+id = &"res_deep"
+display_name = "Deep Reserves"
+tree = 2
+effect = 4
+magnitude = 200.0
+cost = 12.0
+prereq = &"res_attune"
+description = "Begin each run with +200 Essence."

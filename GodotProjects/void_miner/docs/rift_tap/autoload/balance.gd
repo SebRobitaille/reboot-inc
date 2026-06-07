@@ -40,10 +40,10 @@ const MAX_SIPHON_FRACTION: float = 0.75
 # Phase durations.
 const SURGE_WARNING: float = 45.0       # prep/re-place phase before the window
 const SURGE_WINDOW: float = 90.0        # resist window; must clear within this
-# Cadence (FAST while building M3; the real ~25-min wall is tuned via SURGE_FACTOR
-# and cost_growth together — see GDD §11, not via these timers).
-const SURGE_FIRST_DELAY: float = 90.0   # first surge after run start
-const SURGE_INTERVAL: float = 180.0     # gap between surges
+# Cadence. Tuned to the GDD ~25-min wall after the balance pass: a gentle first
+# surge, then ~25 min between (real-time pacing knob; difficulty is SURGE_FACTOR).
+const SURGE_FIRST_DELAY: float = 300.0   # first surge ~5 min in
+const SURGE_INTERVAL: float = 1500.0     # ~25 min between surges
 
 # Rubber-band threshold.
 const PEAK_WINDOW: float = 120.0        # rolling window for peak capture-rate (~2 min)

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BuildingData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/building_data.gd" id="1_bd"]
+
+[resource]
+script = ExtResource("1_bd")
+id = &"twin_portal"
+display_name = "Twin Portal"
+category = 0
+buy_currency = 1
+base_cost = 30.0
+cost_growth = 1.2
+base_emission = 0.0
+base_collect = 0.0
+mirror_fraction = 0.6
+preferred_ring = 2
+unlock_requirement = 6
+description = "Opens a second portal: re-emits 60% of ring-0 emission into its ring, closer to outer collectors."
