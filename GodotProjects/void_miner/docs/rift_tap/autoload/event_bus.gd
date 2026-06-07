@@ -6,6 +6,8 @@ extends Node
 # --- Currency / economy (M1) ---
 signal essence_changed(value: float)
 signal flux_changed(value: float)
+## Fired on a manual portal tap (for audio/feedback).
+signal portal_tapped()
 ## Emitted ~once per second with smoothed rates.
 ## Keys: emit_per_sec, captured_per_sec, lost_per_sec, inflight_total
 signal stats_updated(stats: Dictionary)

@@ -108,6 +108,7 @@ func _tick() -> void:
 func manual_extract() -> void:
 	inflight[0] += Balance.MANUAL_EMIT
 	_emitted_acc += Balance.MANUAL_EMIT
+	EventBus.portal_tapped.emit()
 
 func manual_collect() -> void:
 	var want := Balance.MANUAL_COLLECT

@@ -97,9 +97,9 @@ func _build_ui() -> void:
 	board.position = Vector2(560, 24)
 	layer.add_child(board)
 
-	# M3 surge banner, below the board.
+	# M3 surge banner, below the ring board.
 	var banner := SurgeBannerScene.instantiate()
-	banner.position = Vector2(560, 360)
+	banner.position = Vector2(560, 500)
 	layer.add_child(banner)
 
 	# M4 prestige screen (hidden overlay) + a HUD toggle to open it.
