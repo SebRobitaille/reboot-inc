@@ -34,11 +34,36 @@ const PREFERRED_RING_BONUS: float = 0.25
 # Stabilizers can't drive drift-loss below this fraction of its base value.
 const MIN_DRIFT_MULT: float = 0.1
 
-# --- Surge threshold (M3) — placeholder, tune against cost_growth later ---
-const SURGE_FACTOR: float = 3.0
+# --- Surges (M3) ---
+# Phase durations.
+const SURGE_WARNING: float = 45.0       # prep/re-place phase before the window
+const SURGE_WINDOW: float = 90.0        # resist window; must clear within this
+# Cadence (FAST while building M3; the real ~25-min wall is tuned via SURGE_FACTOR
+# and cost_growth together — see GDD §11, not via these timers).
+const SURGE_FIRST_DELAY: float = 90.0   # first surge after run start
+const SURGE_INTERVAL: float = 180.0     # gap between surges
 
+# Rubber-band threshold.
+const PEAK_WINDOW: float = 120.0        # rolling window for peak capture-rate (~2 min)
+const SURGE_FACTOR: float = 3.0         # how far above recent peak you must push
+const DEPTH_THRESHOLD_SCALAR: float = 0.1   # threshold grows per depth tier
+
+## Total destabilization (essence captured during the window) needed to clear.
+## peak_net_capture is essence/sec; multiplying by SURGE_WINDOW turns that rate into
+## a window total, and SURGE_FACTOR sets how far above your recent peak you must push
+## DURING the window — the rubber-band wall. Tune SURGE_FACTOR with cost_growth.
 static func surge_threshold(peak_net_capture: float, depth: int) -> float:
-	return peak_net_capture * SURGE_FACTOR * (1.0 + 0.1 * depth)
+	return peak_net_capture * SURGE_FACTOR * (1.0 + DEPTH_THRESHOLD_SCALAR * depth) * SURGE_WINDOW
+
+# Rewards for clearing a surge.
+const CORES_PER_CLEAR: int = 1          # Rift Cores per cleared surge
+const DEPTH_MULT_BONUS: float = 0.10    # base extraction/collection bump per tier
+
+# --- Overclock ability (M3): the "survive the wall" tool ---
+const OVERCLOCK_MULT: float = 3.0       # emission + collection multiplier while active
+const OVERCLOCK_DURATION: float = 15.0  # seconds of burst
+const OVERCLOCK_COOLDOWN: float = 60.0  # cooldown after it ends
+const OVERCLOCK_UNLOCK_CORES: int = 1   # unlocked once you've earned this many cores
 
 # --- Echoes (M4) — placeholder ---
 const ECHO_K: float = 1.0

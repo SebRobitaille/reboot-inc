@@ -17,10 +17,23 @@ signal building_placed(data, ring: int, slot: int)
 ## Keeps the shop and the board decoupled (neither references the other).
 signal build_selection_changed(data)
 
-# --- Surges (M3+) ---
+# --- Surges (M3) ---
+## Counts down each frame during the warning phase (seconds until the window opens).
 signal surge_warning(seconds: float)
-signal surge_started(data)
+## Window opened. `threshold` = destabilization needed to clear.
+signal surge_started(threshold: float)
+## Window progress, ~once per second: accumulated destabilization vs threshold and
+## seconds left in the window.
+signal surge_progress(destabilization: float, threshold: float, seconds_left: float)
 signal surge_resolved(success: bool)
+
+# --- Depth / cores (M3) ---
+signal depth_changed(depth: int)
+signal rift_cores_changed(cores: int)
+
+# --- Overclock ability (M3) ---
+## State dict: { unlocked: bool, active: bool, on_cooldown: bool, time_left: float }
+signal overclock_changed(state: Dictionary)
 
 # --- Prestige (M4+) ---
 signal prestige_completed(echoes: float)

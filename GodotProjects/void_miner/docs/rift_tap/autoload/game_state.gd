@@ -10,9 +10,14 @@ var flux: float = 0.0
 var rift_cores: int = 0
 var depth: int = 0
 
-# Global multipliers (raised by prestige later; 1.0 for M2).
+# Global multipliers (raised by depth tiers / prestige later; 1.0 at run start).
 var extraction_mult: float = 1.0
 var collection_mult: float = 1.0
+
+# Transient ability multipliers (Overclock, M3). 1.0 when inactive; SurgeManager
+# owns the timing and writes these.
+var surge_emission_mult: float = 1.0
+var surge_collection_mult: float = 1.0
 
 ## Every buildable BuildingData, loaded from BUILDINGS_DIR at startup. The shop
 ## reads this so adding a .tres adds content with no code change.
@@ -53,6 +58,21 @@ func spend_flux(amount: float) -> bool:
 	EventBus.flux_changed.emit(flux)
 	return true
 
+# --- Depth & cores (M3) ---
+func add_rift_cores(n: int) -> void:
+	if n == 0:
+		return
+	rift_cores += n
+	EventBus.rift_cores_changed.emit(rift_cores)
+
+## Advance one depth tier and nudge the base production multipliers (a cleared
+## surge makes you permanently a little stronger). Called by SurgeManager.
+func advance_depth() -> void:
+	depth += 1
+	extraction_mult *= 1.0 + Balance.DEPTH_MULT_BONUS
+	collection_mult *= 1.0 + Balance.DEPTH_MULT_BONUS
+	EventBus.depth_changed.emit(depth)
+
 # --- Economy interface (unchanged signatures since M1) ---
 
 ## Per-ring summed extractor emission, with global + preferred-ring bonuses applied.
@@ -65,7 +85,7 @@ func emission_by_ring() -> PackedFloat64Array:
 		if data.category == BuildingData.Category.EXTRACTOR:
 			arr[p["ring"]] += data.base_emission * _placement_bonus(data, p["ring"])
 	for i in arr.size():
-		arr[i] *= extraction_mult
+		arr[i] *= extraction_mult * surge_emission_mult
 	return arr
 
 ## Per-ring summed collector capacity, with global + preferred-ring bonuses applied.
@@ -77,7 +97,7 @@ func collection_by_ring() -> PackedFloat64Array:
 		if data.category == BuildingData.Category.COLLECTOR:
 			arr[p["ring"]] += data.base_collect * _placement_bonus(data, p["ring"])
 	for i in arr.size():
-		arr[i] *= collection_mult
+		arr[i] *= collection_mult * surge_collection_mult
 	return arr
 
 ## Global Flux multiplier from all Refineries (1.0 = no support).
