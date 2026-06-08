@@ -143,3 +143,14 @@ func _on_stats_updated(stats: Dictionary) -> void:
 		NumberFormat.format(stats["lost_per_sec"]),
 		NumberFormat.format(stats["inflight_total"]),
 	]
+
+## The game launches fullscreen; F11 toggles it and Esc drops to windowed so you're
+## never trapped.
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F11:
+			var fs := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+			DisplayServer.window_set_mode(
+				DisplayServer.WINDOW_MODE_WINDOWED if fs else DisplayServer.WINDOW_MODE_FULLSCREEN)
+		elif event.keycode == KEY_ESCAPE:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)

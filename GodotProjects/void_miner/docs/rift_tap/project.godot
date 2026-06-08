@@ -14,6 +14,15 @@ config/name="Rift Tap"
 run/main_scene="res://scenes/main/Main.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 
+[display]
+
+; Launch fullscreen; the fixed-layout UI is scaled to fill via canvas_items stretch.
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/mode=3
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
 [autoload]
 
 EventBus="*res://autoload/event_bus.gd"
