@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://scenes/ui/surge_banner.gd" id="1_surge"]
-
-[node name="SurgeBanner" type="PanelContainer"]
-script = ExtResource("1_surge")
